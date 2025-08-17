@@ -87,8 +87,12 @@ class NeyrinckCommerce
     
     private function init_components()
     {
-        // Initialize handlers and other components here
-        // This will be expanded in later phases
+        $this->init_handlers();
+    }
+    
+    private function init_handlers()
+    {
+        new \NeyrinckCommerce\Handlers\OrderCompletionHandler();
     }
     
     public function activate()
