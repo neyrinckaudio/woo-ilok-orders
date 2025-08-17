@@ -33,8 +33,8 @@ This plugin will handle the automated creation of software licenses for initial 
 **Acceptance Criteria:**
 
 - Plugin detects when an order payment has been received
-- For each order item containing a 'sku_guid' metadata value:
-    - Extract the 'sku_guid' value from product metadata
+- For each order item containing a '_ilok_sku_guid' metadata value:
+    - Extract the '_ilok_sku_guid' value from product metadata
     - Extract the 'iLok User ID' value from product metadata for the account ID
     - Call `WPEdenRemote::depositSkus()` with collected SKU GUIDs, account ID, and order ID
     - Store the returned 'deposit_reference_value' as order item metadata
@@ -104,7 +104,7 @@ This plugin will handle the automated creation of software licenses for initial 
 **Requirement ID:** TR-004  
 **Metadata Fields:**
 
-- Product metadata: 'sku_guid' (existing, read-only)
+- Product metadata: '_ilok_sku_guid' (existing, read-only)
 - Order item metadata: 'iLok User ID' (existing, read-only)
 - Order item metadata: 'deposit_reference_value' (plugin-created)
 
@@ -132,7 +132,7 @@ This plugin will handle the automated creation of software licenses for initial 
 ### 6.1 Assumptions
 
 - wp-edenremote plugin is properly installed and configured
-- Products requiring license creation have 'sku_guid' metadata configured
+- Products requiring license creation have '_ilok_sku_guid' metadata configured
 - WooCommerce Subscriptions is properly configured for subscription products
 - Customer account IDs are available through standard WooCommerce functions
 
@@ -140,7 +140,7 @@ This plugin will handle the automated creation of software licenses for initial 
 
 - wp-edenremote plugin must be active and functional
 - WooCommerce and WooCommerce Subscriptions must be active
-- Products must have properly configured 'sku_guid' metadata
+- Products must have properly configured '_ilok_sku_guid' metadata
 
 ## 7. Out of Scope
 
@@ -204,7 +204,7 @@ This plugin will handle the automated creation of software licenses for initial 
 
 ### 10.2 Operational Risks
 
-- **Risk:** Missing or incorrect 'sku_guid' metadata
+- **Risk:** Missing or incorrect '_ilok_sku_guid' metadata
     
 - **Mitigation:** Implement validation and clear error logging
     

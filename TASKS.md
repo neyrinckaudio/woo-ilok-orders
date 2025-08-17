@@ -14,7 +14,7 @@ Based on the Product Requirements Document (PRD.md), this document outlines the 
 ### 2. Initial License Creation (FR-001)
 - [ ] Create OrderCompletionHandler class
 - [ ] Hook into WooCommerce order payment completion events
-- [ ] Implement product metadata validation for 'sku_guid' field
+- [ ] Implement product metadata validation for '_ilok_sku_guid' field
 - [ ] Extract 'iLok User ID' from order item metadata
 - [ ] Create integration with WPEdenRemote::depositSkus() method
 - [ ] Store 'deposit_reference_value' as order item metadata
@@ -136,7 +136,7 @@ Based on the Product Requirements Document (PRD.md), this document outlines the 
 - [ ] API timeout management
 
 ### Data Structure (TR-004)
-- [ ] 'sku_guid' metadata reading
+- [ ] '_ilok_sku_guid' metadata reading
 - [ ] 'iLok User ID' metadata reading
 - [ ] 'deposit_reference_value' metadata storage
 - [ ] Metadata validation and sanitization
@@ -184,7 +184,7 @@ Based on the Product Requirements Document (PRD.md), this document outlines the 
 - [ ] Implement graceful degradation
 
 ### Operational Risks (10.2)
-- [ ] Add 'sku_guid' metadata validation
+- [ ] Add '_ilok_sku_guid' metadata validation
 - [ ] Implement subscription renewal verification
 - [ ] Create administrative monitoring tools
 - [ ] Add data integrity checks

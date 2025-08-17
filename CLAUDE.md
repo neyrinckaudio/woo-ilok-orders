@@ -24,7 +24,7 @@ This is the Neyrinck Commerce WordPress plugin project - a WooCommerce integrati
 ### Key Integration Points
 - `WPEdenRemote::depositSkus($sku_guids, $account_id, $order_id)` - Creates licenses for new purchases
 - `WPEdenRemote::refreshSubscription($deposit_ref)` - Renews subscription-based licenses
-- Product metadata: `sku_guid` (identifies licensable products)
+- Product metadata: `ilok_sku_guid` (identifies licensable products)
 - Order metadata: `iLok User ID` (customer account), `deposit_reference_value` (license reference)
 
 ### Core Components
@@ -45,7 +45,7 @@ This is the Neyrinck Commerce WordPress plugin project - a WooCommerce integrati
 - wp-edenremote plugin (license management system)
 
 ### Business Logic
-- **Initial Purchase**: Extract sku_guid from products → call depositSkus() → store deposit_reference_value
+- **Initial Purchase**: Extract _ilok_sku_guid from products → call depositSkus() → store deposit_reference_value
 - **Subscription Renewal**: Retrieve deposit_reference_value → call refreshSubscription()
 - **Data Flow**: WooCommerce order events → license API calls → metadata storage
 
@@ -62,7 +62,7 @@ This is the Neyrinck Commerce WordPress plugin project - a WooCommerce integrati
 ## Key Requirements
 
 ### Functional
-- 100% automated license creation for orders with sku_guid products
+- 100% automated license creation for orders with _ilok_sku_guid products
 - 100% automated license renewal for subscription renewals
 - Graceful handling of wp-edenremote API failures
 - No disruption to existing WooCommerce processes
