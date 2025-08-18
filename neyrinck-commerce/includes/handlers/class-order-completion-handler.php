@@ -243,17 +243,21 @@ class OrderCompletionHandler
             $item_references = [];
             for ($i = 0; $i < $quantity; $i++) {
                 if (isset($deposit_references[$reference_index])) {
-                    $item_references[] = $deposit_references[$reference_index];
+                    array_push($item_references, $deposit_references[$reference_index]);
                 }
                 $reference_index++;
             }
-            
-            if (!empty($item_references)) {
-                $order->update_meta_data("_deposit_reference_value_{$item_id}", $item_references);
-                
-                wc_update_order_item_meta($item_id, 'deposit_reference_value', $item_references);
-                
-                $this->log_info("Stored deposit references for item {$item_id}: " . implode(', ', $item_references));
+            if (count($item_references)==1) {
+                $item_reference = $item_references[0];
+                $order->update_meta_data("_deposit_reference_value_{$item_id}", $item_reference);
+                wc_update_order_item_meta($item_id, 'deposit_reference_value', $item_reference);
+            }
+            else {
+                if (!empty($item_references)) {
+                    $order->update_meta_data("_deposit_reference_value_{$item_id}", $item_references);
+                    $this->log_info("Stored deposit references for item {$item_id}: " . implode(', ', $item_references));
+                    wc_update_order_item_meta($item_id, 'deposit_reference_value', $item_references);
+                }
             }
         }
         
