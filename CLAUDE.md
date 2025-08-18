@@ -29,12 +29,12 @@ This is the Neyrinck Commerce WordPress plugin project - a WooCommerce integrati
 
 ### Core Components
 1. **NeyrinckCommerce** (Implemented) - Main plugin class with singleton pattern
-2. **Autoloader** (Implemented) - PSR-4 compatible class autoloading
+2. **Autoloader** (Implemented) - PSR-4 compatible class autoloading with CamelCase to kebab-case conversion
 3. **DependencyChecker** (Implemented) - Validates required plugins and versions
-4. **OrderCompletionHandler** (Planned) - Processes new orders for license creation
-5. **SubscriptionRenewalHandler** (Planned) - Handles subscription renewals
-6. **Metadata Management** (Planned) - Stores and retrieves license-related data
-7. **Error Handling & Logging** (Planned) - Manages API failures and debugging
+4. **OrderCompletionHandler** (Implemented) - Processes new orders for license creation
+5. **MetadataManager** (Implemented) - Stores and retrieves license-related data
+6. **SubscriptionRenewalHandler** (Planned) - Handles subscription renewals
+7. **Enhanced Error Handling & Logging** (Planned) - Advanced API failure management
 
 ## Development Context
 
@@ -52,11 +52,18 @@ This is the Neyrinck Commerce WordPress plugin project - a WooCommerce integrati
 ### Development Phases
 1. **Phase 1**: ✅ Plugin Setup and Architecture (COMPLETED)
    - Plugin directory structure and main files
-   - Autoloading system
+   - Autoloading system with CamelCase to kebab-case conversion
    - Dependency checking
    - Activation/deactivation hooks
-2. **Phase 2**: Core license creation on order completion (IN PROGRESS)
-3. **Phase 3**: Subscription renewal handling  
+2. **Phase 2**: ✅ Core License Creation on Order Completion (COMPLETED)
+   - OrderCompletionHandler with multiple WooCommerce hook integration
+   - Product `_ilok_sku_guid` metadata validation
+   - Order item `iLok User ID` extraction
+   - WPEdenRemote::depositSkus() integration with proper response handling
+   - License GUID storage as order metadata
+   - Duplicate processing prevention
+   - Comprehensive logging (ERROR, WARNING, INFO levels)
+3. **Phase 3**: Subscription renewal handling (NEXT)
 4. **Phase 4**: Performance optimization and enhanced error handling
 
 ## Key Requirements
@@ -75,14 +82,19 @@ This is the Neyrinck Commerce WordPress plugin project - a WooCommerce integrati
 
 ## Implementation Status
 
-### Completed (Phase 1)
+### Completed (Phase 1 & 2)
 - ✅ Plugin foundation with WordPress standards compliance
 - ✅ Singleton pattern main class (`NeyrinckCommerce`)
-- ✅ PSR-4 autoloading system (`NeyrinckCommerce\Autoloader`)
+- ✅ PSR-4 autoloading system with fixed CamelCase to kebab-case conversion (`NeyrinckCommerce\Autoloader`)
 - ✅ Comprehensive dependency checking (`NeyrinckCommerce\Utils\DependencyChecker`)
 - ✅ Proper activation/deactivation hooks with error handling
 - ✅ Multisite compatibility and clean uninstall
 - ✅ Internationalization ready with text domain
+- ✅ **OrderCompletionHandler** - Full license creation workflow
+- ✅ **MetadataManager** - Centralized metadata validation and storage
+- ✅ **WPEdenRemote Integration** - Proper API calling with response parsing
+- ✅ **License GUID Processing** - Extract license GUIDs from API response and store as order metadata
+- ✅ **Error Handling** - Comprehensive logging with WooCommerce logger integration
 
 ### File Structure
 ```
@@ -91,19 +103,41 @@ neyrinck-commerce/
 ├── uninstall.php                  # Clean removal script
 ├── readme.txt                     # WordPress plugin documentation
 ├── includes/
-│   ├── class-autoloader.php       # PSR-4 autoloader
+│   ├── class-autoloader.php       # PSR-4 autoloader with CamelCase conversion
 │   ├── classes/                   # Core plugin classes
-│   ├── handlers/                  # Event handlers (planned)
+│   ├── handlers/
+│   │   └── class-order-completion-handler.php  # License creation handler
 │   └── utils/
-│       └── class-dependency-checker.php  # Plugin validation
+│       ├── class-dependency-checker.php  # Plugin validation
+│       └── class-metadata-manager.php    # Metadata utilities
 ├── assets/                        # Frontend assets
 ├── languages/                     # Internationalization
 └── tests/                         # Unit testing
 ```
 
+## Current Functionality (Phase 2 Complete)
+
+### License Creation Workflow
+1. **Order Detection**: Hooks into `woocommerce_order_status_completed`, `woocommerce_payment_complete`, and `woocommerce_order_status_processing`
+2. **Product Validation**: Validates products have `_ilok_sku_guid` metadata
+3. **User ID Extraction**: Gets `iLok User ID` from order item metadata
+4. **API Integration**: Calls `\WPEdenRemote::depositSkus()` with SKU GUIDs, account ID, and order ID
+5. **Response Processing**: Parses JSON response to extract license GUIDs
+6. **Metadata Storage**: Stores license GUIDs as `deposit_reference_value` in order item metadata
+7. **Duplicate Prevention**: Marks orders as processed to prevent re-processing
+8. **Logging**: Comprehensive error, warning, and info logging
+
+### Key Features Working
+- ✅ Multiple quantity handling (creates licenses for each product quantity)
+- ✅ Proper namespace resolution for global `WPEdenRemote` class
+- ✅ JSON response parsing from wp-edenremote API
+- ✅ License GUID extraction and storage
+- ✅ WooCommerce logger integration (fixed invalid "success" level)
+- ✅ Detailed error logging with full result arrays for debugging
+
 ## Important Notes
 
 - Implementation follows detailed requirements in PRD.md and task breakdown in TASKS.md
-- Plugin must handle both perpetual and subscription-based software licenses
-- All license operations must be automated without manual intervention
-- Next: Implement OrderCompletionHandler for license creation (Phase 2)
+- Plugin successfully handles initial license creation for both perpetual and subscription-based products
+- All license operations are fully automated without manual intervention
+- **Next: Implement SubscriptionRenewalHandler for license renewal (Phase 3)**
