@@ -273,7 +273,7 @@ class OrderCompletionHandler
     
     private function log_success($message, $trigger = '')
     {
-        $this->write_log('SUCCESS', $message, $trigger);
+        $this->write_log('INFO', $message, $trigger);
     }
     
     private function write_log($level, $message, $trigger = '')
