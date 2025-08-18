@@ -45,6 +45,8 @@ class OrderCompletionHandler
                 return;
             }
             
+            $this->log_info("Processing order {$order_id} with status '{$order->get_status()}' and payment status '" . ($order->is_paid() ? 'paid' : 'unpaid') . "'", $trigger);
+            
             if ($this->has_already_processed($order)) {
                 $this->log_info("Order {$order_id} already processed for license creation", $trigger);
                 return;
