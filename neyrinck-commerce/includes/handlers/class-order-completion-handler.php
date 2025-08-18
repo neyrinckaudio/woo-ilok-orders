@@ -211,15 +211,15 @@ class OrderCompletionHandler
                     }
                     $this->store_deposit_references($order, $license_items, $license_guids, $item_map);
                     $this->mark_as_processed($order);
-                    $this->log_success("Successfully created licenses for order {$order->get_id()}", $trigger);
+                    $this->log_success("Successfully created licenses for order {$order->get_id()}. license_guids: " . print_r($license_guids, true), $trigger);
                 }
                 else{
-                    $this->log_error("httpcode != 200 from WPEdenRemote::depositSkus for order {$order->get_id()}", $trigger);
+                    $this->log_error("httpcode != 200 from WPEdenRemote::depositSkus for order {$order->get_id()}. Result: " . print_r($result, true), $trigger);
                 }
             }
             else
             {
-                $this->log_error("No httpcode from WPEdenRemote::depositSkus for order {$order->get_id()}", $trigger);
+                $this->log_error("No httpcode from WPEdenRemote::depositSkus for order {$order->get_id()}. Result: " . print_r($result, true), $trigger);
             }
             
         } catch (Exception $e) {
