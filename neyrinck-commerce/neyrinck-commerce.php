@@ -93,6 +93,7 @@ class NeyrinckCommerce
     private function init_handlers()
     {
         new \NeyrinckCommerce\Handlers\OrderCompletionHandler();
+        new \NeyrinckCommerce\Handlers\SubscriptionRenewalHandler();
     }
     
     public function activate()
