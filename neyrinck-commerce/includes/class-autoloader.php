@@ -22,7 +22,8 @@ class Autoloader
         $class_name = str_replace('NeyrinckCommerce\\', '', $class_name);
         $class_parts = explode('\\', $class_name);
         
-        $file_name = 'class-' . strtolower(str_replace('_', '-', end($class_parts))) . '.php';
+        $class_name_part = end($class_parts);
+        $file_name = 'class-' . strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $class_name_part)) . '.php';
         
         if (count($class_parts) > 1) {
             $namespace = strtolower($class_parts[0]);
