@@ -198,7 +198,7 @@ class OrderCompletionHandler
         $account_id = $license_items[0]['ilok_user_id'];
         
         try {
-            $result = WPEdenRemote::depositSkus($sku_guids, $account_id, $order->get_id());
+            $result = \WPEdenRemote::depositSkus($sku_guids, $account_id, $order->get_id());
             
             if (isset($result['httpcode']))
             {
@@ -225,7 +225,7 @@ class OrderCompletionHandler
     
     private function check_wp_eden_remote_availability()
     {
-        return class_exists('WPEdenRemote') && method_exists('WPEdenRemote', 'depositSkus');
+        return class_exists('\WPEdenRemote') && method_exists('\WPEdenRemote', 'depositSkus');
     }
     
     private function store_deposit_references($order, $license_items, $deposit_references, $item_map)
