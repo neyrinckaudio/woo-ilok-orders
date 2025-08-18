@@ -205,7 +205,11 @@ class OrderCompletionHandler
                 if ($result['httpcode'] === 200){
                     $response = json_decode($result['response'], true);
                     $licenses = $response['licenses'];
-                    $this->store_deposit_references($order, $license_items, $licenses, $item_map);
+                    $license_guids = [];
+                    foreach ($licenses as $license) {
+                        array_push($license_guids, $license['licenseGuid']);
+                    }
+                    $this->store_deposit_references($order, $license_items, $license_guids, $item_map);
                     $this->mark_as_processed($order);
                     $this->log_success("Successfully created licenses for order {$order->get_id()}", $trigger);
                 }
