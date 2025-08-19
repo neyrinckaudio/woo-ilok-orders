@@ -265,7 +265,7 @@ class SubscriptionRenewalHandler
                 $total_renewals++;
                 
                 try {
-                    $result = \WPEdenRemote::refreshSubscription($deposit_ref);
+                    $result = \WPEdenRemote::refreshSubscription(null, $deposit_ref);
                     
                     if ($this->is_refresh_successful($result)) {
                         $successful_renewals++;
