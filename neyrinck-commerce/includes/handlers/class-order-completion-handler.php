@@ -52,6 +52,11 @@ class OrderCompletionHandler
                 return;
             }
             
+            if ($this->is_subscription_renewal_order($order)) {
+                $this->log_info("Skipping renewal order {$order_id} - should be handled by SubscriptionRenewalHandler", $trigger);
+                return;
+            }
+            
             $license_items = $this->get_license_items($order);
             
             if (empty($license_items)) {
@@ -76,6 +81,37 @@ class OrderCompletionHandler
     {
         $order->update_meta_data('_neyrinck_commerce_processed', time());
         $order->save();
+    }
+    
+    private function is_subscription_renewal_order($order)
+    {
+        // Check if this order has renewal meta data
+        $subscription_renewal = $order->get_meta('_subscription_renewal', true);
+        if (!empty($subscription_renewal)) {
+            return true;
+        }
+        
+        // Check if this order was created by WooCommerce Subscriptions as a renewal
+        $created_via = $order->get_created_via();
+        if ($created_via === 'subscription') {
+            return true;
+        }
+        
+        // Check if the order has a parent subscription
+        $subscription_id = $order->get_meta('_subscription_renewal', true);
+        if (!empty($subscription_id)) {
+            return true;
+        }
+        
+        // Check if order contains subscription products and is not the first order
+        if (function_exists('wcs_order_contains_subscription') && wcs_order_contains_subscription($order)) {
+            // If it contains subscriptions but is marked as a renewal type, it's a renewal
+            if (function_exists('wcs_order_contains_renewal') && wcs_order_contains_renewal($order)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     private function get_license_items($order)
