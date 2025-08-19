@@ -17,7 +17,6 @@ class SubscriptionRenewalHandler
     {
         add_action('woocommerce_subscription_renewal_payment_complete', [$this, 'process_subscription_renewal'], 10, 2);
         add_action('wcs_renewal_order_created', [$this, 'process_renewal_order_created'], 10, 2);
-        add_action('woocommerce_subscription_payment_complete', [$this, 'process_subscription_payment'], 10, 1);
     }
     
     public function process_subscription_renewal($subscription, $last_order)
@@ -28,15 +27,12 @@ class SubscriptionRenewalHandler
     public function process_renewal_order_created($renewal_order, $subscription)
     {
         if ($renewal_order->get_status() === 'completed' || $renewal_order->is_paid()) {
-            $this->process_license_renewal($subscription, $renewal_order, 'renewal_order_created');
-        }
-    }
-    
-    public function process_subscription_payment($subscription)
-    {
-        $last_order = $subscription->get_last_order('all');
-        if ($last_order && ($last_order->get_status() === 'completed' || $last_order->is_paid())) {
-            $this->process_license_renewal($subscription, $last_order, 'subscription_payment_complete');
+            // Only process if this is actually a renewal order, not the initial parent order
+            if ($this->is_renewal_order($subscription, $renewal_order)) {
+                $this->process_license_renewal($subscription, $renewal_order, 'renewal_order_created');
+            } else {
+                $this->log_info("Skipping initial subscription order {$renewal_order->get_id()} for subscription {$subscription->get_id()}", 'renewal_order_created');
+            }
         }
     }
     
@@ -90,6 +86,42 @@ class SubscriptionRenewalHandler
     private function is_order_object($order)
     {
         return is_object($order) && method_exists($order, 'get_id') && method_exists($order, 'get_items');
+    }
+    
+    private function is_renewal_order($subscription, $order)
+    {
+        $parent_order = $subscription->get_parent();
+        
+        if (!$parent_order) {
+            return false;
+        }
+        
+        // If the order ID matches the parent order ID, this is the initial subscription, not a renewal
+        if ($order->get_id() === $parent_order->get_id()) {
+            return false;
+        }
+        
+        // Check if this order has renewal meta data
+        $subscription_renewal = $order->get_meta('_subscription_renewal', true);
+        if (!empty($subscription_renewal)) {
+            return true;
+        }
+        
+        // Check if this order was created by WooCommerce Subscriptions as a renewal
+        $created_via = $order->get_created_via();
+        if ($created_via === 'subscription') {
+            return true;
+        }
+        
+        // Additional check: see if the order was created after the parent order
+        $parent_date = $parent_order->get_date_created();
+        $order_date = $order->get_date_created();
+        
+        if ($order_date && $parent_date && $order_date > $parent_date) {
+            return true;
+        }
+        
+        return false;
     }
     
     private function has_already_processed_renewal($renewal_order)
