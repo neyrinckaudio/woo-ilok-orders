@@ -273,7 +273,6 @@ class SubscriptionRenewalHandler
                     } else {
                         $this->log_error("Failed to refresh license {$deposit_ref} for subscription {$subscription->get_id()}. Result: " . print_r($result, true), $trigger);
                     }
-                    
                 } catch (Exception $e) {
                     $this->log_error("WPEdenRemote::refreshSubscription failed for deposit reference {$deposit_ref}: " . $e->getMessage(), $trigger);
                 }
@@ -292,19 +291,11 @@ class SubscriptionRenewalHandler
     {
         return class_exists('\WPEdenRemote') && method_exists('\WPEdenRemote', 'refreshSubscription');
     }
-    
+
     private function is_refresh_successful($result)
     {
         if (isset($result['httpcode'])) {
             return $result['httpcode'] === 200;
-        }
-        
-        if (is_array($result) && isset($result['success'])) {
-            return $result['success'] === true;
-        }
-        
-        if (is_bool($result)) {
-            return $result;
         }
         
         return false;
