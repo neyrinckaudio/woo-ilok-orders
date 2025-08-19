@@ -231,11 +231,7 @@ class SubscriptionRenewalHandler
     
     private function get_parent_deposit_references($parent_order, $parent_item_id)
     {
-        $reference = $parent_order->get_meta("_deposit_reference_value_{$parent_item_id}", true);
-        
-        if (empty($reference)) {
-            $reference = wc_get_order_item_meta($parent_item_id, 'deposit_reference_value', true);
-        }
+        $reference = wc_get_order_item_meta($parent_item_id, 'deposit_reference_value', true);
         
         if (is_string($reference)) {
             return [$reference];
