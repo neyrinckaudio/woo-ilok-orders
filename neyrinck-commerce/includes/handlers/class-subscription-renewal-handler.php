@@ -281,6 +281,9 @@ class SubscriptionRenewalHandler
                     
                     if ($this->is_refresh_successful($result)) {
                         $successful_renewals++;
+
+                        $this->mark_as_processed($renewal_order);
+                        $this->add_order_note($renewal_order->get_id(), "Refreshed license ref: " . $deposit_ref);
                         $this->log_info("Successfully refreshed license {$deposit_ref} for subscription {$subscription->get_id()}", $trigger);
                     } else {
                         $this->log_error("Failed to refresh license {$deposit_ref} for subscription {$subscription->get_id()}. Result: " . print_r($result, true), $trigger);
