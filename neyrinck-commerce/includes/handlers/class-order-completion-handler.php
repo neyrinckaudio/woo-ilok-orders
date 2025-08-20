@@ -310,16 +310,17 @@ class OrderCompletionHandler
                     $this->mark_as_processed($order);
                     $this->log_success("Successfully created licenses for order {$order->get_id()}. license_guids: " . print_r($license_guids, true), $trigger);
                 }
-                else{
+                else {
+                    $this->add_order_note($order->get_id(), 'License deposit failed. httpcode: ' . print_r($result, true));
                     $this->log_error("httpcode != 200 from WPEdenRemote::depositSkus for order {$order->get_id()}. Result: " . print_r($result, true), $trigger);
                 }
-            }
-            else
-            {
+            } else {
+                $this->add_order_note($order->get_id(), 'License deposit failed. No httpcode. ' . print_r($result, true));
                 $this->log_error("No httpcode from WPEdenRemote::depositSkus for order {$order->get_id()}. Result: " . print_r($result, true), $trigger);
             }
             
         } catch (Exception $e) {
+            $this->add_order_note($order->get_id(), 'WPEdenRemote::depositSkus failed. ' . $e->getMessage());
             $this->log_error("WPEdenRemote::depositSkus failed for order {$order->get_id()}: " . $e->getMessage(), $trigger);
         }
     }
@@ -348,12 +349,13 @@ class OrderCompletionHandler
                 $item_reference = $item_references[0];
                 $order->update_meta_data("_deposit_reference_value_{$item_id}", $item_reference);
                 wc_update_order_item_meta($item_id, 'deposit_reference_value', $item_reference);
-            }
-            else {
+                $this->add_order_note($order->get_id(), 'Deposited license ref: ' . $item_reference);
+            } else {
                 if (!empty($item_references)) {
                     $order->update_meta_data("_deposit_reference_value_{$item_id}", $item_references);
                     $this->log_info("Stored deposit references for item {$item_id}: " . implode(', ', $item_references));
                     wc_update_order_item_meta($item_id, 'deposit_reference_value', $item_references);
+                    $this->add_order_note($order->get_id(), 'Deposited multiple licenses.');
                 }
             }
         }
