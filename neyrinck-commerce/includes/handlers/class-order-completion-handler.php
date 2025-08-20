@@ -44,17 +44,56 @@ class OrderCompletionHandler
 
     public function process_order_completion($order_id)
     {
-        $this->process_license_creation($order_id, 'order_completed');
+        $order = wc_get_order($order_id);
+        
+        if (!$order) {
+            $this->log_error("Order not found: {$order_id}", 'process_order_completion');
+            return;
+        }
+        // if order has been processed, nothing to do. 
+        if ($this->has_already_processed($order)) {
+            return;
+        }
+        $this->process_license_creation($order, 'order_completed');
+        // if order was not processed, then there is a problem and the status is set to processing.
+        if (!$this->has_already_processed($order)) {
+            $this->set_order_status($order_id, 'processing');
+        }
     }
     
     public function process_payment_completion($order_id)
     {
-        $this->process_license_creation($order_id, 'payment_completed');
+        $order = wc_get_order($order_id);
+        
+        if (!$order) {
+            $this->log_error("Order not found: {$order_id}", 'process_payment_completion');
+            return;
+        }
+        // if order has been processed, nothing to do. 
+        if ($this->has_already_processed($order)) {
+            return;
+        }
+        $this->process_license_creation($order, 'payment_completed');
     }
-    
+
     public function process_order_processing($order_id)
     {
-        $this->process_license_creation($order_id, 'order_processing');
+        $order = wc_get_order($order_id);
+        
+        if (!$order) {
+            $this->log_error("Order not found: {$order_id}", 'process_order_processing');
+            return;
+        }
+        // if order has not processed yet, deposit licenses
+        if (!$this->has_already_processed($order)) {
+            $this->process_license_creation($order, 'order_processing');
+            // if it still has not been processed then there is a problem and order remains in state
+            if (!$this->has_already_processed($order)) {
+                $this->log_warning("Tried to create licenses but order is not marked as processed: {$order_id}", 'process_order_processing');
+                return;
+            }
+        }
+        $this->set_order_status($order_id, 'completed');
     }
     
     private function process_license_creation($order, $trigger)
