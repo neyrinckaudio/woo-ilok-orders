@@ -19,7 +19,29 @@ class OrderCompletionHandler
         add_action('woocommerce_payment_complete', [$this, 'process_payment_completion'], 10, 1);
         add_action('woocommerce_order_status_processing', [$this, 'process_order_processing'], 10, 1);
     }
-    
+
+    private function add_order_note($order_id, $note)
+    {
+        $order = wc_get_order($order_id);
+        
+        if (!$order) {
+            $this->log_error("Order not found: {$order_id}", 'add_order_note');
+            return;
+        }
+        $order->add_order_note($note);
+    }
+
+    private function set_order_status($order_id, $status)
+    {
+        $order = wc_get_order($order_id);
+        
+        if (!$order) {
+            $this->log_error("Order not found: {$order_id}", 'set_order_status');
+            return;
+        }
+        $order->update_status($status); 
+    }
+
     public function process_order_completion($order_id)
     {
         $this->process_license_creation($order_id, 'order_completed');
