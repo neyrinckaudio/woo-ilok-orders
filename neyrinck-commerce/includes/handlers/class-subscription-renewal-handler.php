@@ -16,12 +16,8 @@ class SubscriptionRenewalHandler
     private function init_hooks()
     {
         add_action('woocommerce_subscription_renewal_payment_complete', [$this, 'process_subscription_renewal'], 10, 2);
-        add_action('wcs_renewal_order_created', [$this, 'process_renewal_order_created'], 10, 2);
     }
-    
-    public function process_subscription_renewal($subscription, $last_order)
     {
-        $this->process_license_renewal($subscription, $last_order, 'subscription_renewal_payment_complete');
     }
     
     public function process_renewal_order_created($renewal_order, $subscription)
