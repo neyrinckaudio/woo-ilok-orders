@@ -282,6 +282,7 @@ class SubscriptionRenewalHandler
                         $this->add_order_note($renewal_order->get_id(), "Refreshed license ref: " . $deposit_ref);
                         $this->log_info("Successfully refreshed license {$deposit_ref} for subscription {$subscription->get_id()}", $trigger);
                     } else {
+                        $this->add_order_note($renewal_order->get_id(), "Failed to refresh license ref: " . $deposit_ref);
                         $this->log_error("Failed to refresh license {$deposit_ref} for subscription {$subscription->get_id()}. Result: " . print_r($result, true), $trigger);
                     }
                 } catch (Exception $e) {
