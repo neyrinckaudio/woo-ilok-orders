@@ -40,15 +40,11 @@ class SubscriptionRenewalHandler
         $order->update_status($status); 
     }
     
-    public function process_renewal_order_created($renewal_order, $subscription)
+    public function process_subscription_renewal($subscription, $last_order)
     {
-        if ($renewal_order->get_status() === 'completed' || $renewal_order->is_paid()) {
-            // Only process if this is actually a renewal order, not the initial parent order
-            if ($this->is_renewal_order($subscription, $renewal_order)) {
-                $this->process_license_renewal($subscription, $renewal_order, 'renewal_order_created');
-            } else {
-                $this->log_info("Skipping initial subscription order {$renewal_order->get_id()} for subscription {$subscription->get_id()}", 'renewal_order_created');
-            }
+        $this->process_license_renewal($subscription, $last_order, 'subscription_renewal_payment_complete');
+        if ($this->has_already_processed($last_order)) {
+            $this->set_order_status($last_order, 'completed');
         }
     }
     
