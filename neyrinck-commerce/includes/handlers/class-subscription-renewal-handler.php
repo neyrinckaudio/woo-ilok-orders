@@ -68,7 +68,7 @@ class SubscriptionRenewalHandler
             $subscription_id = $subscription->get_id();
             $renewal_order_id = $renewal_order->get_id();
             
-            if ($this->has_already_processed_renewal($renewal_order)) {
+            if ($this->has_already_processed($renewal_order)) {
                 $this->log_info("Renewal order {$renewal_order_id} for subscription {$subscription_id} already processed", $trigger);
                 return;
             }
@@ -140,16 +140,16 @@ class SubscriptionRenewalHandler
         return false;
     }
     
-    private function has_already_processed_renewal($renewal_order)
+    private function has_already_processed($order)
     {
-        $processed = $renewal_order->get_meta('_neyrinck_commerce_renewal_processed', true);
+        $processed = $order->get_meta('_neyrinck_commerce_processed', true);
         return !empty($processed);
     }
     
-    private function mark_renewal_as_processed($renewal_order)
+    private function mark_as_processed($order)
     {
-        $renewal_order->update_meta_data('_neyrinck_commerce_renewal_processed', time());
-        $renewal_order->save();
+        $order->update_meta_data('_neyrinck_commerce_processed', time());
+        $order->save();
     }
     
     private function get_renewal_license_items($subscription, $parent_order, $renewal_order)
@@ -292,7 +292,7 @@ class SubscriptionRenewalHandler
         }
         
         if ($successful_renewals === $total_renewals && $total_renewals > 0) {
-            $this->mark_renewal_as_processed($renewal_order);
+            $this->mark_as_processed($renewal_order);
             $this->log_info("Successfully processed all {$successful_renewals} license renewals for subscription {$subscription->get_id()}", $trigger);
         } else {
             $this->log_warning("Processed {$successful_renewals} out of {$total_renewals} license renewals for subscription {$subscription->get_id()}", $trigger);
