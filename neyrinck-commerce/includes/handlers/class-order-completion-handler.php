@@ -57,39 +57,37 @@ class OrderCompletionHandler
         $this->process_license_creation($order_id, 'order_processing');
     }
     
-    private function process_license_creation($order_id, $trigger)
+    private function process_license_creation($order, $trigger)
     {
         try {
-            $order = wc_get_order($order_id);
-            
             if (!$order) {
-                $this->log_error("Order not found: {$order_id}", $trigger);
+                $this->log_error("Order not found.", $trigger);
                 return;
             }
             
-            $this->log_info("Processing order {$order_id} with status '{$order->get_status()}' and payment status '" . ($order->is_paid() ? 'paid' : 'unpaid') . "'", $trigger);
+            $this->log_info("Processing order {$order->get_id()} with status '{$order->get_status()}' and payment status '" . ($order->is_paid() ? 'paid' : 'unpaid') . "'", $trigger);
             
             if ($this->has_already_processed($order)) {
-                $this->log_info("Order {$order_id} already processed for license creation", $trigger);
+                $this->log_info("Order {$order->get_id()} already processed for license creation", $trigger);
                 return;
             }
             
             if ($this->is_subscription_renewal_order($order)) {
-                $this->log_info("Skipping renewal order {$order_id} - should be handled by SubscriptionRenewalHandler", $trigger);
+                $this->log_info("Skipping renewal order {$order->get_id()} - should be handled by SubscriptionRenewalHandler", $trigger);
                 return;
             }
             
             $license_items = $this->get_license_items($order);
             
             if (empty($license_items)) {
-                $this->log_info("No license items found in order {$order_id}", $trigger);
+                $this->log_info("No license items found in order {$order->get_id()}", $trigger);
                 return;
             }
             
             $this->create_licenses_for_items($order, $license_items, $trigger);
             
         } catch (Exception $e) {
-            $this->log_error("Error processing order {$order_id}: " . $e->getMessage(), $trigger);
+            $this->log_error("Error processing order {$order->get_id()}: " . $e->getMessage(), $trigger);
         }
     }
     
