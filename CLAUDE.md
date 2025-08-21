@@ -45,7 +45,7 @@ This is the Neyrinck Commerce WordPress plugin project - a WooCommerce integrati
 - wp-edenremote plugin (license management system)
 
 ### Business Logic
-- **Initial Purchase**: Extract _ilok_sku_guid from products → call depositSkus() → store deposit_reference_value
+- **Initial Purchase**: Extract ilok_sku_guid from products → call depositSkus() → store deposit_reference_value
 - **Subscription Renewal**: Retrieve deposit_reference_value → call refreshSubscription()
 - **Data Flow**: WooCommerce order events → license API calls → metadata storage
 
@@ -57,7 +57,7 @@ This is the Neyrinck Commerce WordPress plugin project - a WooCommerce integrati
    - Activation/deactivation hooks
 2. **Phase 2**: ✅ Core License Creation on Order Completion (COMPLETED)
    - OrderCompletionHandler with multiple WooCommerce hook integration
-   - Product `_ilok_sku_guid` metadata validation
+   - Product `ilok_sku_guid` metadata validation
    - Order item `iLok User ID` extraction
    - WPEdenRemote::depositSkus() integration with proper response handling
    - License GUID storage as order metadata
@@ -75,7 +75,7 @@ This is the Neyrinck Commerce WordPress plugin project - a WooCommerce integrati
 ## Key Requirements
 
 ### Functional
-- 100% automated license creation for orders with _ilok_sku_guid products
+- 100% automated license creation for orders with ilok_sku_guid products
 - 100% automated license renewal for subscription renewals
 - Graceful handling of wp-edenremote API failures
 - No disruption to existing WooCommerce processes
@@ -129,7 +129,7 @@ neyrinck-commerce/
 ### License Creation Workflow (Initial Orders)
 1. **Order Detection**: Hooks into `woocommerce_order_status_completed`, `woocommerce_payment_complete`, and `woocommerce_order_status_processing`
 2. **Renewal Order Detection**: Identifies and skips subscription renewal orders
-3. **Product Validation**: Validates products have `_ilok_sku_guid` metadata
+3. **Product Validation**: Validates products have `ilok_sku_guid` metadata
 4. **User ID Extraction**: Gets `iLok User ID` from order item metadata
 5. **API Integration**: Calls `\WPEdenRemote::depositSkus()` with SKU GUIDs, account ID, and order ID
 6. **Response Processing**: Parses JSON response to extract license GUIDs
@@ -166,7 +166,7 @@ neyrinck-commerce/
 ## Core License Management Workflow
 
 ### Initial Subscription Purchase
-1. Customer purchases subscription product with `_ilok_sku_guid`
+1. Customer purchases subscription product with `ilok_sku_guid`
 2. OrderCompletionHandler detects new order (not renewal)
 3. Validates product metadata and extracts iLok User ID
 4. Calls `WPEdenRemote::depositSkus()` to create licenses
@@ -181,7 +181,7 @@ neyrinck-commerce/
 6. Tracks renewal success/failure with detailed logging
 
 ### Error Scenarios Handled
-- Missing `_ilok_sku_guid` or `iLok User ID` metadata
+- Missing `ilok_sku_guid` or `iLok User ID` metadata
 - WPEdenRemote API failures or timeouts
 - Invalid API responses or HTTP codes
 - Duplicate processing attempts

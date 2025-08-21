@@ -212,10 +212,10 @@ class OrderCompletionHandler
     
     private function get_product_sku_guid($product)
     {
-        $sku_guid = $product->get_meta('_ilok_sku_guid', true);
+        $sku_guid = $product->get_meta('ilok_sku_guid', true);
         
         if (empty($sku_guid)) {
-            $sku_guid = get_post_meta($product->get_id(), '_ilok_sku_guid', true);
+            $sku_guid = get_post_meta($product->get_id(), 'ilok_sku_guid', true);
         }
         
         return $this->validate_sku_guid($sku_guid);

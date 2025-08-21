@@ -36,7 +36,7 @@ Neyrinck Commerce is a WordPress plugin that integrates WooCommerce with the wp-
 1. Upload the plugin files to the `/wp-content/plugins/neyrinck-commerce` directory, or install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress.
 3. Ensure WooCommerce, WooCommerce Subscriptions, and wp-edenremote plugins are installed and activated.
-4. Configure your products with the required '_ilok_sku_guid' metadata for license provisioning.
+4. Configure your products with the required 'ilok_sku_guid' metadata for license provisioning.
 
 == Frequently Asked Questions ==
 
@@ -46,7 +46,7 @@ This plugin requires WooCommerce, WooCommerce Subscriptions, and wp-edenremote t
 
 = How does license creation work? =
 
-When a customer completes a purchase containing products with '_ilok_sku_guid' metadata, the plugin automatically creates licenses through the wp-edenremote system and stores the license reference with the order.
+When a customer completes a purchase containing products with 'ilok_sku_guid' metadata, the plugin automatically creates licenses through the wp-edenremote system and stores the license reference with the order.
 
 = How does subscription renewal work? =
 
