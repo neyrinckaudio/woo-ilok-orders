@@ -4,6 +4,8 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
     exit;
 }
 
+global $wpdb;
+
 delete_option('woo_ilok_orders_version');
 delete_option('woo_ilok_orders_settings');
 
