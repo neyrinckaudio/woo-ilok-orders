@@ -1,6 +1,6 @@
 <?php
 
-namespace NeyrinckCommerce\Handlers;
+namespace WooIlokOrders\Handlers;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -342,7 +342,7 @@ class SubscriptionRenewalHandler
         
         if (function_exists('wc_get_logger')) {
             $logger = wc_get_logger();
-            $logger->log(strtolower($level), $log_message, ['source' => 'neyrinck-commerce']);
+            $logger->log(strtolower($level), $log_message, ['source' => 'woo-ilok-orders']);
         }
     }
 }

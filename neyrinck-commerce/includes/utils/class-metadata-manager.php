@@ -1,6 +1,6 @@
 <?php
 
-namespace NeyrinckCommerce\Utils;
+namespace WooIlokOrders\Utils;
 
 if (!defined('ABSPATH')) {
     exit;

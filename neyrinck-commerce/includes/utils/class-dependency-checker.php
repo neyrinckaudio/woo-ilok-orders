@@ -1,6 +1,6 @@
 <?php
 
-namespace NeyrinckCommerce\Utils;
+namespace WooIlokOrders\Utils;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -129,30 +129,30 @@ class DependencyChecker
     public function dependency_admin_notice()
     {
         $message = '<div class="notice notice-error"><p>';
-        $message .= '<strong>' . __('Neyrinck Commerce Plugin Error:', 'neyrinck-commerce') . '</strong><br>';
+        $message .= '<strong>' . __('WooCommerce iLok Orders Plugin Error:', 'woo-ilok-orders') . '</strong><br>';
         
         if (!empty($this->missing_plugins)) {
             $message .= sprintf(
-                __('The following required plugins are not installed: %s', 'neyrinck-commerce'),
+                __('The following required plugins are not installed: %s', 'woo-ilok-orders'),
                 '<strong>' . implode(', ', $this->missing_plugins) . '</strong>'
             ) . '<br>';
         }
         
         if (!empty($this->inactive_plugins)) {
             $message .= sprintf(
-                __('The following required plugins are not active: %s', 'neyrinck-commerce'),
+                __('The following required plugins are not active: %s', 'woo-ilok-orders'),
                 '<strong>' . implode(', ', $this->inactive_plugins) . '</strong>'
             ) . '<br>';
         }
         
         if (!empty($this->outdated_plugins)) {
             $message .= sprintf(
-                __('The following required plugins need to be updated: %s', 'neyrinck-commerce'),
+                __('The following required plugins need to be updated: %s', 'woo-ilok-orders'),
                 '<strong>' . implode(', ', $this->outdated_plugins) . '</strong>'
             ) . '<br>';
         }
         
-        $message .= __('Please install, activate, and update the required plugins before using Neyrinck Commerce.', 'neyrinck-commerce');
+        $message .= __('Please install, activate, and update the required plugins before using WooCommerce iLok Orders.', 'woo-ilok-orders');
         $message .= '</p></div>';
         
         echo $message;

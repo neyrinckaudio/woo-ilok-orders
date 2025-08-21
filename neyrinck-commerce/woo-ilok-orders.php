@@ -1,14 +1,14 @@
 <?php
 /**
- * Plugin Name: Neyrinck Commerce
- * Plugin URI: https://github.com/neyrinck/neyrinck-commerce
- * Description: WooCommerce integration for automated software license provisioning through wp-edenremote license management system.
+ * Plugin Name: WooCommerce iLok Orders
+ * Plugin URI: https://github.com/neyrinck/woo-ilok-orders
+ * Description: WooCommerce integration for automated iLok license provisioning and subscription management through wp-edenremote.
  * Version: 1.0.0
  * Author: Neyrinck
  * Author URI: https://neyrinck.com
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: neyrinck-commerce
+ * Text Domain: woo-ilok-orders
  * Domain Path: /languages
  * Requires at least: 5.0
  * Tested up to: 6.4
@@ -21,12 +21,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('NEYRINCK_COMMERCE_VERSION', '1.0.0');
-define('NEYRINCK_COMMERCE_PLUGIN_FILE', __FILE__);
-define('NEYRINCK_COMMERCE_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('NEYRINCK_COMMERCE_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('WOO_ILOK_ORDERS_VERSION', '1.0.0');
+define('WOO_ILOK_ORDERS_PLUGIN_FILE', __FILE__);
+define('WOO_ILOK_ORDERS_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('WOO_ILOK_ORDERS_PLUGIN_URL', plugin_dir_url(__FILE__));
 
-class NeyrinckCommerce
+class WooIlokOrders
 {
     private static $instance = null;
     
@@ -55,7 +55,7 @@ class NeyrinckCommerce
     public function load_textdomain()
     {
         load_plugin_textdomain(
-            'neyrinck-commerce',
+            'woo-ilok-orders',
             false,
             dirname(plugin_basename(__FILE__)) . '/languages'
         );
@@ -73,16 +73,16 @@ class NeyrinckCommerce
     
     public function check_dependencies()
     {
-        require_once NEYRINCK_COMMERCE_PLUGIN_DIR . 'includes/utils/class-dependency-checker.php';
+        require_once WOO_ILOK_ORDERS_PLUGIN_DIR . 'includes/utils/class-dependency-checker.php';
         
-        $dependency_checker = new NeyrinckCommerce\Utils\DependencyChecker();
+        $dependency_checker = new WooIlokOrders\Utils\DependencyChecker();
         return $dependency_checker->check_all_dependencies();
     }
     
     private function load_classes()
     {
-        require_once NEYRINCK_COMMERCE_PLUGIN_DIR . 'includes/class-autoloader.php';
-        NeyrinckCommerce\Autoloader::register();
+        require_once WOO_ILOK_ORDERS_PLUGIN_DIR . 'includes/class-autoloader.php';
+        WooIlokOrders\Autoloader::register();
     }
     
     private function init_components()
@@ -92,8 +92,8 @@ class NeyrinckCommerce
     
     private function init_handlers()
     {
-        new \NeyrinckCommerce\Handlers\OrderCompletionHandler();
-        new \NeyrinckCommerce\Handlers\SubscriptionRenewalHandler();
+        new \WooIlokOrders\Handlers\OrderCompletionHandler();
+        new \WooIlokOrders\Handlers\SubscriptionRenewalHandler();
     }
     
     public function activate()
@@ -101,8 +101,8 @@ class NeyrinckCommerce
         if (!$this->check_dependencies()) {
             deactivate_plugins(plugin_basename(__FILE__));
             wp_die(
-                __('Neyrinck Commerce requires WooCommerce, WooCommerce Subscriptions, and wp-edenremote plugins to be installed and activated.', 'neyrinck-commerce'),
-                __('Plugin Activation Error', 'neyrinck-commerce'),
+                __('WooCommerce iLok Orders requires WooCommerce, WooCommerce Subscriptions, and wp-edenremote plugins to be installed and activated.', 'woo-ilok-orders'),
+                __('Plugin Activation Error', 'woo-ilok-orders'),
                 ['back_link' => true]
             );
         }
@@ -125,17 +125,17 @@ class NeyrinckCommerce
     
     private function set_default_options()
     {
-        add_option('neyrinck_commerce_version', NEYRINCK_COMMERCE_VERSION);
-        add_option('neyrinck_commerce_settings', [
+        add_option('woo_ilok_orders_version', WOO_ILOK_ORDERS_VERSION);
+        add_option('woo_ilok_orders_settings', [
             'debug_mode' => false,
             'log_level' => 'error'
         ]);
     }
 }
 
-function neyrinck_commerce()
+function woo_ilok_orders()
 {
-    return NeyrinckCommerce::get_instance();
+    return WooIlokOrders::get_instance();
 }
 
-neyrinck_commerce();
+woo_ilok_orders();

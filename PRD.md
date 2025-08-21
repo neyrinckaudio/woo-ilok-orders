@@ -1,14 +1,14 @@
-# Neyrinck Commerce Plugin - Product Requirements Document
+# WooCommerce iLok Orders Plugin - Product Requirements Document
 
 ## 1. Overview
 
 ### 1.1 Purpose
 
-The Neyrinck Commerce plugin is a WordPress plugin designed to integrate WooCommerce with the wp-edenremote license management system for automated software license provisioning and subscription renewal handling.
+The WooCommerce iLok Orders plugin is a WordPress plugin designed to integrate WooCommerce with the wp-edenremote license management system for automated iLok license provisioning and subscription renewal handling.
 
 ### 1.2 Scope
 
-This plugin will handle the automated creation of software licenses for initial purchases and renewal of licenses for subscription-based products through integration with the existing wp-edenremote license management system.
+This plugin will handle the automated creation of iLok licenses for initial purchases and renewal of licenses for subscription-based products through integration with the existing wp-edenremote license management system.
 
 ## 2. Product Description
 
@@ -20,8 +20,8 @@ This plugin will handle the automated creation of software licenses for initial 
 
 ### 2.2 Product Types Supported
 
-- Perpetual software licenses
-- Subscription-based software licenses
+- Perpetual iLok licenses  
+- Subscription-based iLok licenses
 
 ## 3. Functional Requirements
 

@@ -4,15 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is the Neyrinck Commerce WordPress plugin project - a WooCommerce integration for automated software license provisioning through the wp-edenremote license management system.
+This is the WooCommerce iLok Orders WordPress plugin project - a WooCommerce integration for automated iLok license provisioning through the wp-edenremote license management system.
 
-**Core Purpose**: Automatically create and renew software licenses when customers purchase or renew subscription-based products in WooCommerce.
+**Core Purpose**: Automatically create and renew iLok licenses when customers purchase or renew subscription-based products in WooCommerce.
 
 ## Architecture
 
 ### Plugin Structure (Implemented)
-- **Main Plugin File**: `neyrinck-commerce/neyrinck-commerce.php` - Singleton pattern with activation/deactivation hooks
-- **Namespace**: `NeyrinckCommerce\` - PSR-4 compatible autoloading
+- **Main Plugin File**: `woo-ilok-orders/woo-ilok-orders.php` - Singleton pattern with activation/deactivation hooks
+- **Namespace**: `WooIlokOrders\` - PSR-4 compatible autoloading
 - **Directory Structure**:
   - `includes/classes/` - Core plugin classes
   - `includes/handlers/` - Order and subscription event handlers
@@ -28,7 +28,7 @@ This is the Neyrinck Commerce WordPress plugin project - a WooCommerce integrati
 - Order metadata: `iLok User ID` (customer account), `deposit_reference_value` (license reference)
 
 ### Core Components
-1. **NeyrinckCommerce** (Implemented) - Main plugin class with singleton pattern
+1. **WooIlokOrders** (Implemented) - Main plugin class with singleton pattern
 2. **Autoloader** (Implemented) - PSR-4 compatible class autoloading with CamelCase to kebab-case conversion
 3. **DependencyChecker** (Implemented) - Validates required plugins and versions
 4. **OrderCompletionHandler** (Implemented) - Processes new orders for license creation with renewal order detection
@@ -90,9 +90,9 @@ This is the Neyrinck Commerce WordPress plugin project - a WooCommerce integrati
 
 ### Completed (Phases 1, 2 & 3)
 - ✅ Plugin foundation with WordPress standards compliance
-- ✅ Singleton pattern main class (`NeyrinckCommerce`)
-- ✅ PSR-4 autoloading system with fixed CamelCase to kebab-case conversion (`NeyrinckCommerce\Autoloader`)
-- ✅ Comprehensive dependency checking (`NeyrinckCommerce\Utils\DependencyChecker`)
+- ✅ Singleton pattern main class (`WooIlokOrders`)
+- ✅ PSR-4 autoloading system with fixed CamelCase to kebab-case conversion (`WooIlokOrders\Autoloader`)
+- ✅ Comprehensive dependency checking (`WooIlokOrders\Utils\DependencyChecker`)
 - ✅ Proper activation/deactivation hooks with error handling
 - ✅ Multisite compatibility and clean uninstall
 - ✅ Internationalization ready with text domain
@@ -106,8 +106,8 @@ This is the Neyrinck Commerce WordPress plugin project - a WooCommerce integrati
 
 ### File Structure
 ```
-neyrinck-commerce/
-├── neyrinck-commerce.php          # Main plugin file
+woo-ilok-orders/
+├── woo-ilok-orders.php          # Main plugin file
 ├── uninstall.php                  # Clean removal script
 ├── readme.txt                     # WordPress plugin documentation
 ├── includes/

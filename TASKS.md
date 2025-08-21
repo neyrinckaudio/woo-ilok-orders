@@ -1,6 +1,6 @@
-# Neyrinck Commerce Plugin - Development Tasks
+# WooCommerce iLok Orders Plugin - Development Tasks
 
-Based on the Product Requirements Document (PRD.md), this document outlines the development tasks required to implement the Neyrinck Commerce WordPress plugin.
+Based on the Product Requirements Document (PRD.md), this document outlines the development tasks required to implement the WooCommerce iLok Orders WordPress plugin.
 
 ## Phase 1: Core Functionality
 

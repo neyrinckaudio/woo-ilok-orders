@@ -1,6 +1,6 @@
-=== Neyrinck Commerce ===
+=== WooCommerce iLok Orders ===
 Contributors: neyrinck
-Tags: woocommerce, licenses, subscriptions, ecommerce, automation
+Tags: woocommerce, ilok, licenses, subscriptions, ecommerce, automation
 Requires at least: 5.0
 Tested up to: 6.4
 Requires PHP: 7.4
@@ -8,11 +8,11 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-WooCommerce integration for automated software license provisioning through wp-edenremote license management system.
+WooCommerce integration for automated iLok license provisioning and subscription management through wp-edenremote.
 
 == Description ==
 
-Neyrinck Commerce is a WordPress plugin that integrates WooCommerce with the wp-edenremote license management system for automated software license provisioning and subscription renewal handling.
+WooCommerce iLok Orders is a WordPress plugin that integrates WooCommerce with the wp-edenremote license management system for automated iLok license provisioning and subscription renewal handling.
 
 = Features =
 
@@ -33,7 +33,7 @@ Neyrinck Commerce is a WordPress plugin that integrates WooCommerce with the wp-
 
 == Installation ==
 
-1. Upload the plugin files to the `/wp-content/plugins/neyrinck-commerce` directory, or install the plugin through the WordPress plugins screen directly.
+1. Upload the plugin files to the `/wp-content/plugins/woo-ilok-orders` directory, or install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress.
 3. Ensure WooCommerce, WooCommerce Subscriptions, and wp-edenremote plugins are installed and activated.
 4. Configure your products with the required 'ilok_sku_guid' metadata for license provisioning.
