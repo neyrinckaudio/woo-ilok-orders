@@ -347,14 +347,14 @@ class OrderCompletionHandler
             }
             if (count($item_references) == 1) {
                 $item_reference = $item_references[0];
-                $order->update_meta_data("_deposit_reference_value_{$item_id}", $item_reference);
-                wc_update_order_item_meta($item_id, 'deposit_reference_value', $item_reference);
+                $order->update_meta_data("_license_deposit_reference_{$item_id}", $item_reference);
+                wc_update_order_item_meta($item_id, 'license_deposit_reference', $item_reference);
                 $this->add_order_note($order->get_id(), 'Deposited license ref: ' . $item_reference);
             } else {
                 if (!empty($item_references)) {
-                    $order->update_meta_data("_deposit_reference_value_{$item_id}", $item_references);
+                    $order->update_meta_data("_license_deposit_reference_{$item_id}", $item_references);
                     $this->log_info("Stored deposit references for item {$item_id}: " . implode(', ', $item_references));
-                    wc_update_order_item_meta($item_id, 'deposit_reference_value', $item_references);
+                    wc_update_order_item_meta($item_id, 'license_deposit_reference', $item_references);
                     $this->add_order_note($order->get_id(), 'Deposited multiple licenses.');
                 }
             }

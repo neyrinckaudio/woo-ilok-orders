@@ -44,8 +44,8 @@ class MetadataManager
             return false;
         }
         
-        $order->update_meta_data("_deposit_reference_value_{$item_id}", $deposit_references);
-        wc_update_order_item_meta($item_id, 'deposit_reference_value', $deposit_references);
+        $order->update_meta_data("_license_deposit_reference_{$item_id}", $deposit_references);
+        wc_update_order_item_meta($item_id, 'license_deposit_reference', $deposit_references);
         
         return true;
     }
@@ -56,10 +56,10 @@ class MetadataManager
             return false;
         }
         
-        $reference = $order->get_meta("_deposit_reference_value_{$item_id}", true);
+        $reference = $order->get_meta("_license_deposit_reference_{$item_id}", true);
         
         if (empty($reference)) {
-            $reference = wc_get_order_item_meta($item_id, 'deposit_reference_value', true);
+            $reference = wc_get_order_item_meta($item_id, 'license_deposit_reference', true);
         }
         
         return $reference;
@@ -140,8 +140,8 @@ class MetadataManager
         $order->delete_meta_data('_neyrinck_commerce_processed');
         
         foreach ($order->get_items() as $item_id => $item) {
-            $order->delete_meta_data("_deposit_reference_value_{$item_id}");
-            wc_delete_order_item_meta($item_id, 'deposit_reference_value');
+            $order->delete_meta_data("_license_deposit_reference_{$item_id}");
+            wc_delete_order_item_meta($item_id, 'license_deposit_reference');
         }
         
         $order->save();
