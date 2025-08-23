@@ -25,7 +25,7 @@ This is the WooCommerce iLok Orders WordPress plugin project - a WooCommerce int
 - `WPEdenRemote::depositSkus($sku_guids, $account_id, $order_id)` - Creates licenses for new purchases
 - `WPEdenRemote::refreshSubscription($deposit_ref)` - Renews subscription-based licenses
 - Product metadata: `ilok_sku_guid` (identifies licensable products)
-- Order metadata: `iLok User ID` (customer account), `deposit_reference_value` (license reference)
+- Order metadata: `iLok User ID` (customer account), `license_deposit_reference` (license reference)
 
 ### Core Components
 1. **WooIlokOrders** (Implemented) - Main plugin class with singleton pattern
@@ -45,8 +45,8 @@ This is the WooCommerce iLok Orders WordPress plugin project - a WooCommerce int
 - wp-edenremote plugin (license management system)
 
 ### Business Logic
-- **Initial Purchase**: Extract ilok_sku_guid from products → call depositSkus() → store deposit_reference_value
-- **Subscription Renewal**: Retrieve deposit_reference_value → call refreshSubscription()
+- **Initial Purchase**: Extract ilok_sku_guid from products → call depositSkus() → store license_deposit_reference
+- **Subscription Renewal**: Retrieve license_deposit_reference → call refreshSubscription()
 - **Data Flow**: WooCommerce order events → license API calls → metadata storage
 
 ### Development Phases
@@ -133,13 +133,13 @@ woo-ilok-orders/
 4. **User ID Extraction**: Gets `iLok User ID` from order item metadata
 5. **API Integration**: Calls `\WPEdenRemote::depositSkus()` with SKU GUIDs, account ID, and order ID
 6. **Response Processing**: Parses JSON response to extract license GUIDs
-7. **Metadata Storage**: Stores license GUIDs as `deposit_reference_value` in order item metadata
+7. **Metadata Storage**: Stores license GUIDs as `license_deposit_reference` in order item metadata
 8. **Duplicate Prevention**: Marks orders as processed to prevent re-processing
 
 ### License Renewal Workflow (Subscription Renewals)
 1. **Renewal Detection**: Hooks into `woocommerce_subscription_renewal_payment_complete` and `wcs_renewal_order_created`
 2. **Parent Order Tracking**: Finds original subscription order and matches renewal items to parent items
-3. **Reference Retrieval**: Gets stored `deposit_reference_value` from parent order metadata
+3. **Reference Retrieval**: Gets stored `license_deposit_reference` from parent order metadata
 4. **API Integration**: Calls `\WPEdenRemote::refreshSubscription()` for each license GUID
 5. **Success Tracking**: Monitors successful vs. failed renewals
 6. **Duplicate Prevention**: Marks renewal orders as processed
@@ -170,7 +170,7 @@ woo-ilok-orders/
 2. OrderCompletionHandler detects new order (not renewal)
 3. Validates product metadata and extracts iLok User ID
 4. Calls `WPEdenRemote::depositSkus()` to create licenses
-5. Stores license GUIDs as `deposit_reference_value` in order metadata
+5. Stores license GUIDs as `license_deposit_reference` in order metadata
 
 ### Subscription Renewal
 1. WooCommerce Subscriptions creates renewal order
