@@ -267,6 +267,17 @@ class OrderCompletionHandler
             return false;
         }
         
+        /* not implemented yet because it's not clear it is necessary.
+        // Validate length (maximum 64 characters)
+        if (strlen($ilok_user_id) > 64) {
+            return false;
+        }
+        
+        // Validate allowed characters: Latin alphabet, digits 0-9, and special characters: _ - @ . +
+        if (!preg_match('/^[a-zA-Z0-9_\-@.+]+$/', $ilok_user_id)) {
+            return false;
+        }
+        */
         return $ilok_user_id;
     }
     
