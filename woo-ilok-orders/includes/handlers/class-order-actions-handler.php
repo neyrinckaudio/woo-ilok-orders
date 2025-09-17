@@ -82,8 +82,8 @@ class OrderActionsHandler
                 return;
             }
 
-            // Get order date for comparison
-            $order_date = $order->get_date_created()->format('Y-m-d');
+            // Get order date for comparison (convert to UTC)
+            $order_date = $order->get_date_created()->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d');
             $licenseGuid = null;
 
             // Debug: Log search parameters
