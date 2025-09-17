@@ -14,11 +14,13 @@ class OrderActionsHandler
     {
         add_filter('woocommerce_order_actions', [$this, 'add_custom_order_actions']);
         add_action('woocommerce_order_action_fix_missing_license_ref', [$this, 'fix_missing_license_ref_action']);
+        add_action('woocommerce_order_action_refresh_subscription_license', [$this, 'refresh_subscription_license_action']);
     }
 
     public function add_custom_order_actions($actions)
     {
         $actions['fix_missing_license_ref'] = __('Fix Missing License Ref', 'woo-ilok-orders');
+        $actions['refresh_subscription_license'] = __('Refresh Subscription License', 'woo-ilok-orders');
         return $actions;
     }
 
@@ -154,6 +156,46 @@ class OrderActionsHandler
         } catch (\Exception $e) {
             $order->add_order_note(
                 sprintf(__('Fix Missing License Ref: Exception occurred - %s', 'woo-ilok-orders'), $e->getMessage())
+            );
+        }
+    }
+
+    public function refresh_subscription_license_action($order)
+    {
+        if (!$order instanceof \WC_Order) {
+            return;
+        }
+
+        // Check if SubscriptionRenewalHandler class exists
+        if (!class_exists('WooIlokOrders\Handlers\SubscriptionRenewalHandler')) {
+            $order->add_order_note(__('Refresh Subscription License: SubscriptionRenewalHandler class not available', 'woo-ilok-orders'));
+            return;
+        }
+
+        // Check if this is a subscription renewal order
+        if (!function_exists('wcs_order_contains_renewal')) {
+            $order->add_order_note(__('Refresh Subscription License: WooCommerce Subscriptions not available', 'woo-ilok-orders'));
+            return;
+        }
+
+        // Get the subscription from the renewal order
+        $subscriptions = wcs_get_subscriptions_for_renewal_order($order);
+        if (empty($subscriptions)) {
+            $order->add_order_note(__('Refresh Subscription License: No subscriptions found for this renewal order', 'woo-ilok-orders'));
+            return;
+        }
+
+        $subscription = reset($subscriptions);
+
+        // Create an instance of SubscriptionRenewalHandler and call process_subscription_renewal
+        $renewal_handler = new \WooIlokOrders\Handlers\SubscriptionRenewalHandler();
+        
+        try {
+            $renewal_handler->process_subscription_renewal($subscription, $order);
+            $order->add_order_note(__('Refresh Subscription License: License renewal process completed', 'woo-ilok-orders'));
+        } catch (\Exception $e) {
+            $order->add_order_note(
+                sprintf(__('Refresh Subscription License: Exception occurred - %s', 'woo-ilok-orders'), $e->getMessage())
             );
         }
     }
