@@ -55,8 +55,14 @@ class OrderActionsHandler
             return;
         }
 
-        // 3. Create a variable $productGuid
-        $productGuid = "1D7C09F0-1AB1-11E5-B051-005056875CC3";
+        // Get order date for comparison (convert to UTC)
+        $order_date = $order->get_date_created()->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d');
+
+        // 3. Product GUIDs to search (try VCP2 first, then VCP3)
+        $productGuids = [
+            'VCP2' => "1D7C09F0-1AB1-11E5-B051-005056875CC3",
+            'VCP3' => "238293B0-3B95-11EE-B381-00505692C25A"
+        ];
 
         // Check if WPEdenRemote class is available
         if (!class_exists('WPEdenRemote') || !method_exists('WPEdenRemote', 'findLicenses')) {
@@ -65,79 +71,76 @@ class OrderActionsHandler
         }
 
         try {
-            // 4. Use WPEdenRemote::findLicenses to get license infos
-            $result = \WPEdenRemote::findLicenses($accountId, null, $productGuid, false, null, null, 0, 1000);
-
-            if ($result['httpcode'] === 200){
-                    $response = json_decode($result['response'], true);
-                    $licenses = $response['licenses'];
-            }
-            else {
-                $order->add_order_note(
-                    sprintf(__('Fix Missing License Ref: API call failed with HTTP code %d', 'woo-ilok-orders'), $result['httpcode'])
-                );
-                return;
-            }
-
-            if (empty($licenses) || !is_array($licenses)) {
-                $order->add_order_note(__('Fix Missing License Ref: No licenses found for account', 'woo-ilok-orders'));
-                return;
-            }
-
-            // Get order date for comparison (convert to UTC)
-            $order_date = $order->get_date_created()->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d');
             $licenseGuid = null;
 
-            // Debug: Log search parameters
-            $order->add_order_note(
-                sprintf(__('Fix Missing License Ref: Searching for licenses - Account: %s, ProductGuid: %s, Order Date: %s, Total Licenses: %d', 'woo-ilok-orders'), 
-                    $accountId, $productGuid, $order_date, count($licenses))
-            );
+            // 4. Search for matching license using each product GUID
+            foreach ($productGuids as $guidName => $productGuid) {
+                $order->add_order_note(
+                    sprintf(__('Fix Missing License Ref: Searching %s licenses - Account: %s, ProductGuid: %s, Order Date: %s', 'woo-ilok-orders'),
+                        $guidName, $accountId, $productGuid, $order_date)
+                );
 
-            // Debug: Log all license types and dates found
-            $debug_info = [];
-            $index = 0;
-            foreach ($licenses as $license) {
-                $license_type = $license['licenseType'] ?? 'N/A';
-                $deposit_date = isset($license['depositDate']) ? date('Y-m-d', strtotime($license['depositDate'])) : 'N/A';
-                $license_guid = $license['licenseGuid'] ?? 'N/A';
-                $debug_info[] = sprintf("License %d: Type=%s, DepositDate=%s, GUID=%s", $index + 1, $license_type, $deposit_date, $license_guid);
-            }
-            
-            if (!empty($debug_info)) {
-                $order->add_order_note(__('Fix Missing License Ref: Found licenses: ' . implode('; ', $debug_info), 'woo-ilok-orders'));
-            }
+                // Call WPEdenRemote::findLicenses
+                $result = \WPEdenRemote::findLicenses($accountId, null, $productGuid, false, null, null, 0, 1000);
 
-            // 5. Find the license with "licenseType":"SUBSCRIPTION" and matching "depositDate"
-            foreach ($licenses as $license) {
-                if (isset($license['licenseType']) && $license['licenseType'] === 'SUBSCRIPTION') {
-                    if (isset($license['depositDate'])) {
-                        $deposit_date = date('Y-m-d', strtotime($license['depositDate']));
-                        $order->add_order_note(
-                            sprintf(__('Fix Missing License Ref: Checking subscription license - DepositDate: %s vs OrderDate: %s', 'woo-ilok-orders'), 
-                                $deposit_date, $order_date)
-                        );
-                        if ($deposit_date === $order_date) {
-                            // 6. Get the "licenseGuid" value
-                            $licenseGuid = $license['licenseGuid'] ?? null;
-                            $order->add_order_note(
-                                sprintf(__('Fix Missing License Ref: Found matching license GUID: %s', 'woo-ilok-orders'), $licenseGuid)
-                            );
-                            break;
+                if ($result['httpcode'] !== 200) {
+                    $order->add_order_note(
+                        sprintf(__('Fix Missing License Ref: %s API call failed with HTTP code %d', 'woo-ilok-orders'),
+                            $guidName, $result['httpcode'])
+                    );
+                    continue; // Try next GUID
+                }
+
+                $response = json_decode($result['response'], true);
+                $licenses = $response['licenses'] ?? [];
+
+                if (empty($licenses) || !is_array($licenses)) {
+                    $order->add_order_note(
+                        sprintf(__('Fix Missing License Ref: No %s licenses found for account', 'woo-ilok-orders'), $guidName)
+                    );
+                    continue; // Try next GUID
+                }
+
+                $order->add_order_note(
+                    sprintf(__('Fix Missing License Ref: Found %d %s licenses', 'woo-ilok-orders'),
+                        count($licenses), $guidName)
+                );
+
+                // 5. Find the license with "licenseType":"SUBSCRIPTION" and matching "depositDate"
+                foreach ($licenses as $license) {
+                    if (isset($license['licenseType']) && $license['licenseType'] === 'SUBSCRIPTION') {
+                        if (isset($license['depositDate'])) {
+                            $deposit_date = date('Y-m-d', strtotime($license['depositDate']));
+
+                            if ($deposit_date === $order_date) {
+                                // 6. Found matching license!
+                                $licenseGuid = $license['licenseGuid'] ?? null;
+                                if (!empty($licenseGuid)) {
+                                    $order->add_order_note(
+                                        sprintf(__('Fix Missing License Ref: Found matching %s subscription license - GUID: %s, DepositDate: %s', 'woo-ilok-orders'),
+                                            $guidName, $licenseGuid, $deposit_date)
+                                    );
+                                    break 2; // Exit both loops - we found it!
+                                }
+                            }
                         }
                     }
                 }
+
+                // If we get here, no match found with this GUID
+                $order->add_order_note(
+                    sprintf(__('Fix Missing License Ref: No %s subscription license found matching order date %s', 'woo-ilok-orders'),
+                        $guidName, $order_date)
+                );
             }
 
+            // 7. Check if we found a matching license
             if (empty($licenseGuid)) {
-                // 8. If no license is found, log an error message
-                $order->add_order_note(
-                    sprintf(__('Fix Missing License Ref: No subscription license found for order date %s', 'woo-ilok-orders'), $order_date)
-                );
+                $order->add_order_note(__('Fix Missing License Ref: No subscription license found matching order date in either VCP2 or VCP3', 'woo-ilok-orders'));
                 return;
             }
 
-            // 7. Add the licenseGuid value as order item meta
+            // 8. Add the licenseGuid value as order item meta
             $updated_items = 0;
             foreach ($order->get_items() as $item) {
                 $sku_guid = MetadataManager::get_product_sku_guid($item->get_product());
@@ -149,7 +152,7 @@ class OrderActionsHandler
             }
 
             $order->add_order_note(
-                sprintf(__('Fix Missing License Ref: Successfully added license reference %s to %d items', 'woo-ilok-orders'), 
+                sprintf(__('Fix Missing License Ref: Successfully added license reference %s to %d items', 'woo-ilok-orders'),
                     $licenseGuid, $updated_items)
             );
 

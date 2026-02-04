@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce iLok Orders
  * Plugin URI: https://github.com/neyrinck/woo-ilok-orders
  * Description: WooCommerce integration for automated iLok license provisioning and subscription management through wp-edenremote.
- * Version: 1.0.1.5
+ * Version: 1.0.2.2
  * Author: Neyrinck
  * Author URI: https://neyrinck.com
  * License: GPL v2 or later
@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('WOO_ILOK_ORDERS_VERSION', '1.0.0');
+define('WOO_ILOK_ORDERS_VERSION', '1.0.2');
 define('WOO_ILOK_ORDERS_PLUGIN_FILE', __FILE__);
 define('WOO_ILOK_ORDERS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WOO_ILOK_ORDERS_PLUGIN_URL', plugin_dir_url(__FILE__));
